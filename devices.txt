@@ -1,0 +1,1 @@
+{"devices": [{"Status": false, "ID": 1, "Location": "Living Room", "Title": "Light in living room"}, {"Status": false, "ID": 2, "Location": "Balcony", "Title": "Balcony Light"}, {"Status": false, "ID": 3, "Location": "Kitchen Room", "Title": "Light in the kitchen"}, {"Status": false, "ID": 4, "Location": "Terrace", "Title": "Terrace Light"}]}

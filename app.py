@@ -30,7 +30,7 @@ def get_password(username):
 
 @app.route('/')
 def index():
-    return "IOT Project Home"
+    return (jsonify({'Result': 'Connected'}), 200)
 
 @app.route('/devices', methods=['GET'])
 @auth.login_required
@@ -135,4 +135,4 @@ def bad_request(error):
 
 if __name__ == "__main__":
     setup()
-    app.run(host = "0.0.0.0", port = 80, debug=True)
+    app.run(host = "0.0.0.0", port = 80, debug=False)

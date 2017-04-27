@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, abort
 from flask import make_response, request
 import json, codecs
-from flask.ext.httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
@@ -35,7 +35,7 @@ def index():
 @app.route('/devices', methods=['GET'])
 @auth.login_required
 def get_devices():
-    return jsonify({'devices': devices })
+    return jsonify(devices)
 
 @app.route('/devices/<int:device_id>', methods=['GET'])
 def get_device(device_id):
@@ -43,7 +43,7 @@ def get_device(device_id):
             if device['ID'] == device_id]
     if len(device) == 0:
         abort(404)
-    return jsonify({'device': device[0]})
+    return jsonify(device[0])
 
 @app.route('/devices/', methods = ['POST'])
 def create_device():
@@ -60,11 +60,11 @@ def create_device():
     devices['devices'].append(new_device)
     with open('devices.txt', 'wb') as file:
         json.dump(devices, codecs.getwriter('utf-8')(file), ensure_ascii = False)
-    return jsonify({'New Device': new_device}), 201
+    return (jsonify({'Result': 'Successful'}), 201)
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+    return make_response(jsonify({'Error': 'Not Found'}), 404)
 
 @app.route('/devices/<int:device_id>', methods = ['PUT'])
 def update_device(device_id):
@@ -84,7 +84,7 @@ def update_device(device_id):
     device[0]['Pin'] = request.json.get('Pin', device[0]['Pin'])
     with open('devices.txt', 'wb') as file:
         json.dump(devices, codecs.getwriter('utf-8')(file), ensure_ascii = False)
-    return jsonify({'Modified Device': device[0]})
+    return jsonify({'Result' : 'Successful'})
 
 @app.route('/devices/<int:device_id>', methods=['DELETE'])
 def delete_device(device_id):
@@ -94,7 +94,7 @@ def delete_device(device_id):
     devices['devices'].remove(device[0])
     with open('devices.txt', 'wb') as file:
         json.dump(devices, codecs.getwriter('utf-8')(file),ensure_ascii = False)
-    return jsonify({'result':True})
+    return jsonify({'Result' : 'Successful'})
 
 @app.route('/devices/switch/<int:device_id>', methods=['PUT'])
 def toggle(device_id):
@@ -109,7 +109,7 @@ def toggle(device_id):
         device[0]['Status'] = True
     with open('devices.txt', 'wb') as file:
         json.dump(devices, codecs.getwriter('utf-8')(file), ensure_ascii = False)
-    return jsonify({'Modified Device': device[0]})
+    return jsonify({'Result' : 'Successful'})
 
 @app.route('/devices/switch/<string:command>', methods=['PUT'])
 def bulk_control(command):
@@ -123,15 +123,15 @@ def bulk_control(command):
             device['Status'] = False
     with open('devices.txt', 'wb') as file:
         json.dump(devices, codecs.getwriter('utf-8')(file), ensure_ascii = False)
-    return (jsonify({'Result': True}))
+    return (jsonify({'Result' : 'Successful'}))
 
 @auth.error_handler
 def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
+    return make_response(jsonify({'Error' : 'Unauthorized Access'}), 401)
 
 @app.errorhandler(400)
 def bad_request(error):
-    return make_response(jsonify({'error': 'Incomplete Parameter'}), 400)
+    return make_response(jsonify({'Error' : 'Incomplete Parameter'}), 400)
 
 if __name__ == "__main__":
     setup()

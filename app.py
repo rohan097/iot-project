@@ -66,7 +66,7 @@ def create_device():
 def not_found(error):
     return make_response(jsonify({'Error': 'Not Found'}), 404)
 
-@app.route('/devices/<int:device_id>', methods = ['PUT'])
+@app.route('/devices/<int:device_id>', methods = ['POST'])
 def update_device(device_id):
     device = [device for device in devices['devices'] if device['ID'] == device_id]
     if len(device) == 0:
@@ -96,7 +96,7 @@ def delete_device(device_id):
         json.dump(devices, codecs.getwriter('utf-8')(file),ensure_ascii = False)
     return jsonify({'Result' : 'Successful'})
 
-@app.route('/devices/switch/<int:device_id>', methods=['PUT'])
+@app.route('/devices/switch/<int:device_id>', methods=['POST'])
 def toggle(device_id):
     device = [device for device in devices['devices'] if device['ID'] == device_id]
     if len(device) == 0:
@@ -111,7 +111,7 @@ def toggle(device_id):
         json.dump(devices, codecs.getwriter('utf-8')(file), ensure_ascii = False)
     return jsonify({'Result' : 'Successful'})
 
-@app.route('/devices/switch/<string:command>', methods=['PUT'])
+@app.route('/devices/switch/<string:command>', methods=['POST'])
 def bulk_control(command):
     if 'On' in command:
         for device in devices['devices']:
